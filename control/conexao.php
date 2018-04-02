@@ -3,7 +3,7 @@
 class Conexao{
 	private $con;
 	function  conectar(){
-		$retorno = ";";
+		$retorno = null;
 		try{
 			$usuario = "root";
 			$senha = "Lasse@123";

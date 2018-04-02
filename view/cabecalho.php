@@ -1,8 +1,7 @@
-<!DOCTYPE html>
+<meta charset="utf-8">
 <html>
-	<head>
-		<title>Sistema de Eventos FPTI</title>
-		<meta charset="utf-8">
-		<script type="text/javascript" src="/JS/script.js"></script>
-	</head>
-	<body>
+   <head>
+     <title>CONTROLE DE EVENTOS FPTI</title>
+   </head>
+   <body>
+   	
