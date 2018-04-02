@@ -9,7 +9,7 @@
         $eventos = $dao->listaGeral();
     ?>
     <form method="post" action="../view/geraRelatorio.php">
-        <select name="eventos" required>
+        <select name="evento" required>
         <option></option>
         <?php
             foreach ($eventos as $evento){
