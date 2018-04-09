@@ -29,13 +29,13 @@
     		return $dados;
     	}
     	function geraRelatorioPorEvento($idEvento){
-    		$query = "SELECT DISTINCT tbUsuario.nomeUsuario as nomeUsuario,tbEvento.nomeEvento as nomeEvento FROM ((listaPresensa INNER JOIN tbUsuario ON listaPresensa.idUsuario = tbUsuario.idUsuario) INNER JOIN tbEvento ON listaPresensa.idEvento = tbEvento.idEvento) WHERE listaPresensa.idEvento = ".$idEvento;
+    		$query = "SELECT DISTINCT tbUsuario.nomeUsuario as nomeUsuario,tbEvento.nomeEvento as nomeEvento, date_format(tbEvento.dataEvento, '%d/%m/%Y') as data FROM ((listaPresensa INNER JOIN tbUsuario ON listaPresensa.idUsuario = tbUsuario.idUsuario) INNER JOIN tbEvento ON listaPresensa.idEvento = tbEvento.idEvento) WHERE listaPresensa.idEvento = ".$idEvento." ORDER BY tbUsuario.nomeUsuario ASC";
     		$busca = $this->con->query($query);
     		$dados = $busca->fetchAll(PDO::FETCH_ASSOC);
     		return $dados;
     	}
     	function geraRelatorioPorUsuario($idUsuario){
-    		$query = "SELECT DISTINCT tbUsuario.nomeUsuario,tbEvento.nomeEvento FROM ((listaPresensa INNER JOIN tbUsuario ON listaPresensa.idUsuario = tbUsuario.idUsuario) INNER JOIN tbEvento ON listaPresensa.idEvento = tbEvento.idEvento) WHERE tbUsuario.idUsuario = ".$idUsuario;
+    		$query = "SELECT DISTINCT tbUsuario.nomeUsuario,tbEvento.nomeEvento, date_format(tbEvento.dataEvento, '%d/%m/%Y') as data FROM ((listaPresensa INNER JOIN tbUsuario ON listaPresensa.idUsuario = tbUsuario.idUsuario) INNER JOIN tbEvento ON listaPresensa.idEvento = tbEvento.idEvento) WHERE tbUsuario.idUsuario = ".$idUsuario."ORDER BY tbEvento.nomeEvento ASC";
     		$busca = $this->con->query($query);
     		$dados = $busca->fetchAll(PDO::FETCH_ASSOC);
     		return $dados;

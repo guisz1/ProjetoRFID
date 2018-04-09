@@ -5,41 +5,33 @@
 	class criaPDF{
 		function fazer($idEvento){
 			$dompdf = new DOMPDF();
-			$data=date('d/m/Y');
 			$listaC = new listaPresensaControl();
 			$dados = $listaC->buscaRelatorioPorEvento($idEvento);
+			$evento = $dados[0];
+			$data = $evento["data"];
+			$i = 0;
 			$html = '
-			<style type="text/css">
-			.tg  {border-collapse:collapse;border-spacing:0;align: center;}
-			.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
-			.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
-			.tg .tg-ajwg{font-size:20px;background-color:#f8a102;border-color:inherit;text-align:center;vertical-align:top}
-			.tg .tg-f47q{font-size:28px;background-color:#ffffc7;border-color:inherit;vertical-align:top}
-			div {width: 100%;}
-			.tabela {width: 100%; margin-bottom: 20px}
-			</style>
-			<table class="tabela">
-				<tr>  
-					<td align="left">Sistema de evento</td>  
-					<td align="right">Gerado em: '.$data.'</td>  
-				</tr>  
+			<link rel="stylesheet" href="style.css" type="text/css"/>
+			<table class="tabelarodape">
+				<td><img class="imagemum" src="logopti.png"></td>
+				<td class="tdrodape">Relatorio do evento '.$evento['nomeEvento'].' na data de '.$data.'</td>
+				<td><img class="imagem" align=right src="logocipa.png"></td>
 			</table>
 			<div>
-				<table class="tg" align=center width=80%>
+				<table class=tbconteudo>
 				  <tr>
-				    <th class="tg-ajwg" colspan="2">Relatório de evento</th>
-				  </tr>
-				  <tr>
-				    <td class="tg-f47q" colspan="2" align="center">Participantes</td>
+				    <td class=tdrconteudo>Participantes</td>
+				    <td class=tddrconteudo>Assinatura</td>
 				  </tr>
 				  ';
 				foreach ($dados as $dado) {
 					$html .='
 					<tr>
-					    <td class="tg-f47q" colspan="2" align="center">'.$dado["nomeUsuario"].'</td>
+					    <td class=tdconteudo>'.$dado["nomeUsuario"].'</td>
+					    <td class=tddconteudo></td
 					</tr>';
+					$evento = $dado["nomeEvento"];
 				}
-
 				  $html .='
 				</table>
 			<div>
