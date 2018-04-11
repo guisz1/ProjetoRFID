@@ -20,7 +20,7 @@
 			<div>
 				<table class=tbconteudo>
 				  <tr>
-				    <td class=tdrconteudo>Participantes</td>
+				    <td class=tdrconteudo>Participante</td>
 				    <td class=tddrconteudo>Assinatura</td>
 				  </tr>
 				  ';
@@ -30,7 +30,6 @@
 					    <td class=tdconteudo>'.$dado["nomeUsuario"].'</td>
 					    <td class=tddconteudo></td
 					</tr>';
-					$evento = $dado["nomeEvento"];
 				}
 				  $html .='
 				</table>
@@ -40,9 +39,13 @@
 
 			$dompdf->render();
 
+			$dompdf->setPaper('a4', 'landscape');
+
 			$dompdf->set_base_path('style.css');
 
-			$dompdf->stream("relatorio.pdf",
+			$pdf= $evento['nomeEvento'].".pdf";
+
+			$dompdf->stream($pdf,
 				array(
 					"Attachment" => false
 				)
