@@ -18,8 +18,8 @@
 	</nav>	
 	<div class="divform">
 		<form method="post" action="../control/eventoControl.php" class="formulario">
-			<p class="pevento">Nome do evento</p><input type="text" name="nomeEvento" required><br>
-			<p class="pevento">Data do evento</p><input type="date" name="dataEvento" min="<?php echo $data ?>" required><br>
+			<p class="pevento">Nome do evento</p><input type="text" style="width: 45%;" name="nomeEvento" required><br>
+			<p class="pevento">Data do evento</p><input type="date" style="width: 45%;" name="dataEvento" min="<?php echo $data ?>" required><br>
 			<input type="hidden" name="acao" value="1"><br>
 			<input type="submit" value="Cadastrar">
 		</form>

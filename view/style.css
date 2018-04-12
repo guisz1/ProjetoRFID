@@ -64,7 +64,10 @@ body{margin: 0; padding: 0;}
     list-style:none;
 }
 
-#menu ul li { display: inline; }
+#menu ul li { 
+	display: inline;
+	margin-left: 5px; 
+}
 
 #menu ul li a {
     padding: 2px 10px;
