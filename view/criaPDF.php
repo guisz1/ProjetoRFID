@@ -15,7 +15,7 @@
 			<table class="tabelarodape">
 				<td><img class="imagemum" src="logopti.png"></td>
 				<td class="tdrodape">Relatorio do evento '.$evento['nomeEvento'].' na data de '.$data.'</td>
-				<td><img class="imagem" align=right src="logocipa.png"></td>
+				<td><img class="imagem" align=right src="logocipa.png" width=100></td>
 			</table>
 			<div>
 				<table class=tbconteudo>

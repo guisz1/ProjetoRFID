@@ -16,6 +16,14 @@
 
       return $dados;
     }
+    function listaGeralf(){
+      $data = date("Y-m-d");
+      $query = "SELECT idEvento,nomeEvento,date_format(dataEvento, '%d/%m/%Y') as dataEvento from tbEvento";
+      $busca = $this->con->query($query);
+      $dados = $busca->fetchAll(PDO::FETCH_ASSOC);
+
+      return $dados;
+    }
 
     function inserir(Evento $e){
       $nome = $e->getNomeEvento();
@@ -26,6 +34,12 @@
 
       header("Location:../view/principal.php");
 
+    }
+
+    function ativar($id){
+      $query = "CALL ativarEvento(".$id.");";
+      $this->stm = $this->con->prepare($query);
+      $this->stm->execute();
     }
   }
 ?>
