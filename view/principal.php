@@ -13,39 +13,64 @@
 		<td><img src="logopti.png" width="120"></td>
 		<td><img align=right src="logocipa.png" width="100"></td>
 	</table>
-	<nav id="menu">
-	    <ul>
-	        <li><a href="principal.php">Home</a></li>
-		    <li><a href="cadastroEvento.php">Cadastro de Eventos</a></li>
-			<li><a href="pedidoRelatorio.php">Relatorio de Eventos</a></li>
-	    </ul>
-	</nav>
+	<div class="divmenu">
+		<nav id="menu">
+		    <ul>
+		        <li><a href="principal.php">Home</a></li>
+			    <li><a href="cadastroEvento.php">Cadastro de Eventos</a></li>
+				<li><a href="pedidoRelatorio.php">Relatorio de Eventos</a></li>
+		    </ul>
+		</nav>
+	</div>
+	<div class="tituloP">
+		<p>Exibição de entrada no evento</p>
+	</div>
 	<form action="" class="formulario">
-		<select id="selecionarEvento" name="customers" onclick="mostraEvento()">
+		<select id="selecionarEvento" name="customers">
 			<option value=""></option>
 			<?php
 	            foreach ($eventos as $evento){
-	                echo utf8_encode("<option value=".$evento["idEvento"].">".$evento["nomeEvento"]." ".$evento["dataEvento"]."</option>");
+	                echo utf8_encode("<option value=".$evento["idEvento"].">COD: ".$evento["idEvento"]." | ".$evento["nomeEvento"]." | Data: ".$evento["dataEvento"]."</option>");
 	            }
 	        ?>
 		</select>	
 	</form>
 	<div id="conteudo" class="conteudo">
-		
 	</div>
-</div>
+	<script>
+		var id = null;
+		var intervalo = null;
+		$("#selecionarEvento").click(function(){
+			if (intervalo != null){
+				clearInterval(intervalo);
+			}
+			id = $( "#selecionarEvento" ).val();
+			if (id === ""){
+				$( "#conteudo").html(function() {
+					return "<p></p>";
+				});
+			}else{
+				$( "#conteudo").html(function() {
+					intervalo = setInterval(function(){ 
+						$.ajax({
+							url: "../listaPresensaControl.php",
+							dataType: 'html',
+							data: {acao: 1,idEvento: id},
+							type: "POST",
+							succes: function(data){
+								$('#conteudo').html('<b>Resultado da busca</b><br /><br/>'+data);
+							},
+							error: function(data){
+								$('#conteudo').html(data);
+							}
+						});
+					}, 200);
+				});
+			};
 
-<script type="text/javascript">
-	function mostraEvento() {
-		var id = document.getElementById('selecionarEvento').value;
-		var conteudo = document.getElementById('conteudo');
-		if (id === "") {
-			conteudo.innerHTML = "";
-		}else{
-			conteudo.innerHTML = id;
-		}
-	}
-</script>
+		});
+	</script>
+</div>
 <?php 
 	include "rodape.php";
 ?>

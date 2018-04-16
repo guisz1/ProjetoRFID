@@ -7,10 +7,10 @@
 	    private $acao = null;
 
 	    function __construct(){
-	      $this->acao = $_REQUEST["acao"];
-	      $this->evento = new Evento();
-	      $this->dao = new EventoDao();
-	      $this->verificaAcao();
+	      	$this->acao = $_REQUEST["acao"];
+	      	$this->evento = new Evento();
+	      	$this->dao = new EventoDao();
+	      	$this->verificaAcao();
 	    }
 	    function verificaAcao(){
 	    	switch ($this->acao) {

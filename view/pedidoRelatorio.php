@@ -21,7 +21,7 @@
         $eventos = $dao->listaGeral();
     ?>
     <div class="divform">
-    <form method="post" action="../view/geraRelatorio.php" class="formulario">
+    <form method="post" action="../view/geraRelatorio.php" target="_blank" class="formulario">
         <select name="evento" required>
         <option></option>
         <?php

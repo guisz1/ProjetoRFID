@@ -16,8 +16,8 @@
 
       		return $dados;
     	}
-    	function buscaUltimo(){
-    		$query = "SELECT tbUsuario.nomeUsuario,tbEvento.nomeEvento, listaPresensa.status, listaPresensa.horario FROM ((listaPresensa INNER JOIN tbUsuario ON listaPresensa.idUsuario = tbUsuario.idUsuario) INNER JOIN tbEvento ON listaPresensa.idEvento = tbEvento.idEvento) ORDER BY horario DESC LIMIT 1";
+    	function buscaUltimo($idEvento){
+    		$query = "SELECT tbUsuario.nomeUsuario AS nomeUsuario,tbEvento.nomeEvento AS nomeEvento, listaPresensa.status AS status, listaPresensa.horario AS horario FROM ((listaPresensa INNER JOIN tbUsuario ON listaPresensa.idUsuario = tbUsuario.idUsuario) INNER JOIN tbEvento ON listaPresensa.idEvento = tbEvento.idEvento) ORDER BY horario AND tbEvento.idEvento = ".$idEvento." LIMIT 1";
     		$busca = $this->con->query($query);
     		$dados = $busca->fetchAll(PDO::FETCH_ASSOC);
     		return $dados;
