@@ -27,8 +27,9 @@
     	function buscaUltimo(){
     		$id = $_POST["idEvento"];
     		$dado = $this->dao->buscaUltimo($id);
-    		echo "Nome: ".$dado["nomeUsuario"]."<br>Status: ".$dado["status"];
-    		return $dado;
+    		$string = "Nome: ".$dado["nomeUsuario"]."<br>Status: ".$dado["status"];
+    		echo $string;
+    		return $string;
     	}
 	}
 	new listaPresensaControl();

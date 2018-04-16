@@ -53,7 +53,7 @@
 				$( "#conteudo").html(function() {
 					intervalo = setInterval(function(){ 
 						$.ajax({
-							url: "../listaPresensaControl.php",
+							url: "../control/listaPresensaControl.php",
 							dataType: 'html',
 							data: {acao: 1,idEvento: id},
 							type: "POST",
