@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Tempo de geração: 26/03/2018 às 11:04
+-- Tempo de geração: 12/04/2018 às 11:18
 -- Versão do servidor: 5.7.21-0ubuntu0.16.04.1
 -- Versão do PHP: 7.0.28-0ubuntu0.16.04.1
 
@@ -139,7 +139,8 @@ CREATE TABLE `tbCartao` (
 INSERT INTO `tbCartao` (`idCartao`, `codigoCartao`, `idUsuario`) VALUES
 (1, '5EE8511B', 1),
 (2, 'FE93591B', 2),
-(3, '6CA33E72', 3);
+(3, '6CA33E72', 3),
+(4, '5C5F4D72', 5);
 
 -- --------------------------------------------------------
 
@@ -150,7 +151,7 @@ INSERT INTO `tbCartao` (`idCartao`, `codigoCartao`, `idUsuario`) VALUES
 CREATE TABLE `tbEvento` (
   `idEvento` int(11) NOT NULL,
   `nomeEvento` varchar(100) NOT NULL,
-  `descricaoEvento` varchar(255) NOT NULL,
+  `dataEvento` date DEFAULT NULL,
   `ativo` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -172,7 +173,8 @@ CREATE TABLE `tbUsuario` (
 INSERT INTO `tbUsuario` (`idUsuario`, `nomeUsuario`) VALUES
 (1, 'Guilherme Seibert'),
 (2, 'Pedro Ivo Martins de Vasconcelos'),
-(3, 'Lucas Brito');
+(3, 'Lucas Brito'),
+(5, 'Marcos Vinicius Alves Balsamo');
 
 --
 -- Índices de tabelas apagadas
@@ -206,17 +208,17 @@ ALTER TABLE `tbUsuario`
 -- AUTO_INCREMENT de tabela `tbCartao`
 --
 ALTER TABLE `tbCartao`
-  MODIFY `idCartao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `idCartao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT de tabela `tbEvento`
 --
 ALTER TABLE `tbEvento`
-  MODIFY `idEvento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idEvento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 --
 -- AUTO_INCREMENT de tabela `tbUsuario`
 --
 ALTER TABLE `tbUsuario`
-  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
