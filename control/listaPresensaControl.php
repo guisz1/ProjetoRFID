@@ -26,10 +26,12 @@
 
     	function buscaUltimo(){
     		$id = $_POST["idEvento"];
-    		$dado = $this->dao->buscaUltimo($id);
-    		$string = "Nome: ".$dado["nomeUsuario"]."<br>Status: ".$dado["status"];
-    		echo $string;
-    		return $string;
+    		$dados = $this->dao->buscaUltimo($id);
+    		foreach ($dados as $dado) {
+    			$result = "Nome: ".$dado["nomeUsuario"]."<br>Status: ".$dado["statuss"];
+    		}
+    		echo $result;
+    		return $result;
     	}
 	}
 	new listaPresensaControl();
