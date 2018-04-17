@@ -50,22 +50,20 @@
 					return "<p></p>";
 				});
 			}else{
-				$( "#conteudo").html(function() {
-					intervalo = setInterval(function(){ 
-						$.ajax({
-							url: "../control/listaPresensaControl.php",
-							dataType: 'html',
-							data: {acao: 1,idEvento: id},
-							type: "POST",
-							succes: function(data){
-								$('#conteudo').html('<b>Resultado da busca</b><br /><br/>'+data);
-							},
-							error: function(data){
-								$('#conteudo').html(data);
-							}
-						});
-					}, 200);
-				});
+				intervalo = setInterval(function(){ 
+					$.ajax({
+						url: "../control/listaPresensaControl.php",
+						dataType: 'html',
+						data: {acao: 1,idEvento: id},
+						type: "POST",
+						success: function(data){
+							$('#conteudo').html('<b>Resultado da busca</b><br /><br/>'+data);
+						},
+						error: function(data){
+							$('#conteudo').html(data);
+						}
+					});
+				}, 200);
 			};
 
 		});

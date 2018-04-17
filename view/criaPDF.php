@@ -11,6 +11,10 @@
 			$data = $evento["data"];
 			$i = 0;
 			$html = '
+			<head>
+				<title>'.$evento['nomeEvento'].'</title>
+			</head>
+			<body>
 			<link rel="stylesheet" href="style.css" type="text/css"/>
 			<table class="tabelarodape">
 				<td><img class="imagemum" src="logopti.png"></td>
@@ -34,12 +38,14 @@
 				  $html .='
 				</table>
 			<div>
-			';
+			</body';
 			$dompdf->load_html($html);
 
 			$dompdf->render();
 
 			$dompdf->setPaper('a4', 'landscape');
+
+
 
 			$dompdf->set_base_path('style.css');
 
