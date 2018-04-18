@@ -8,7 +8,6 @@
 <?php 
 	 $eventos = $dao->listaGeralf();
 ?>
-
 <div class="divPrincipal">
 	<table class="tabelarodape">
 		<td><img src="logopti.png" width="120"></td>
