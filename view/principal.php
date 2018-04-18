@@ -8,6 +8,7 @@
 <?php 
 	 $eventos = $dao->listaGeralf();
 ?>
+
 <div class="divPrincipal">
 	<table class="tabelarodape">
 		<td><img src="logopti.png" width="120"></td>
@@ -26,7 +27,7 @@
 		<p>Exibição de entrada no evento</p>
 	</div>
 	<form action="" class="formulario">
-		<select id="selecionarEvento" name="customers">
+		<select id="selecionarEvento" name="customers" focus>
 			<option value=""></option>
 			<?php
 	            foreach ($eventos as $evento){
@@ -38,6 +39,7 @@
 	<div id="conteudo" class="conteudo">
 	</div>
 	<script>
+		document.getElementById("selecionarEvento").focus();
 		var id = null;
 		var intervalo = null;
 		$("#selecionarEvento").click(function(){
