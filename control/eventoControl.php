@@ -3,7 +3,7 @@
 	require_once "../DAO/eventoDAO.php";
 	class EventoControl{
 		private $dao = null;
-	    private $garcom = null;
+		private $evento = null;
 	    private $acao = null;
 
 	    function __construct(){

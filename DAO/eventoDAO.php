@@ -10,7 +10,7 @@
     }
 
     function listaGeral(){
-  		$query = "SELECT * from tbEvento where ativo = 1";
+  		$query = "SELECT * from tbEvento where ativo = 1 and inserido = 1";
       $busca = $this->con->query($query);
       $dados = $busca->fetchAll(PDO::FETCH_ASSOC);
 
@@ -40,6 +40,27 @@
       $query = "CALL ativarEvento(".$id.");";
       $this->stm = $this->con->prepare($query);
       $this->stm->execute();
+    }
+
+    function setaId($id){
+      $query = "CALL eventoSelecionado(".$id.");";
+      $this->stm = $this->con->prepare($query);
+      $this->stm->execute();
+      $query = "CALL ativarEvento(".$id.");";
+      $this->stm = $this->con->prepare($query);
+      $this->stm->execute();
+    }
+    function pegaId(){
+      $query = "SELECT ultimo();";
+      $busca = $this->con->query($query);
+      $dado = $busca->fetchALL(PDO::FETCH_ASSOC);
+
+      return $dado;
+    }
+    function controlaPresensa($idEvento,$cartao){
+      $query = "CALL controlaPresensa('".$idEvento."','".$cartao."');";
+      $this->stm = $this->con->prepare($query);
+      $this->stm->execute(); 
     }
   }
 ?>

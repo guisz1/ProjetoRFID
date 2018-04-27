@@ -7,9 +7,13 @@
 			$dompdf = new DOMPDF();
 			$listaC = new listaPresensaControl();
 			$dados = $listaC->buscaRelatorioPorEvento($idEvento);
+			$evento = null;
 			$evento = $dados[0];
 			$data = $evento["data"];
 			$i = 0;
+			if ($evento == null) {
+				 header("Location:pedidoRelatorio.php");
+			}
 			$html = '
 			<head>
 				<title>'.$evento['nomeEvento'].'</title>

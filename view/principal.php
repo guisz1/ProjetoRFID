@@ -3,26 +3,21 @@
 ?>
 <?php 
 	require_once '../DAO/eventoDAO.php';
+
 	$dao = new EventoDao();
 ?>
 <?php 
 	 $eventos = $dao->listaGeralf();
+?>
+<?php 
+	
 ?>
 <div class="divPrincipal">
 	<table class="tabelarodape">
 		<td><img src="logopti.png" width="120"></td>
 		<td><img align=right src="logocipa.png" width="100"></td>
 	</table>
-	<div class="divmenu">
-		<nav id="menu">
-		    <ul>
-		        <li><a href="principal.php">Home</a></li>
-			    <li><a href="cadastroEvento.php">Cadastro de Eventos</a></li>
-				<li><a href="pedidoRelatorio.php">Relatorio de Eventos</a></li>
-		    </ul>
-		</nav>
-	</div>
-	<div class="tituloP">
+		<div class="tituloP">
 		<p>Exibição de entrada no evento</p>
 	</div>
 	<form action="" class="formulario">
@@ -38,19 +33,39 @@
 	<div id="conteudo" class="conteudo">
 	</div>
 	<script>
-		document.getElementById("selecionarEvento").focus();
+		
 		var id = null;
 		var intervalo = null;
+		$(document).ready(function(){
+  			$.ajax({
+				url: "../control/cracha.php",
+				dataType: 'html',
+				data: {acao:1,idEvento: 0},
+				type: "POST"
+			});
+		});
 		$("#selecionarEvento").click(function(){
 			if (intervalo != null){
 				clearInterval(intervalo);
 			}
 			id = $( "#selecionarEvento" ).val();
 			if (id === ""){
+				$.ajax({
+						url: "../control/cracha.php",
+						dataType: 'html',
+						data: {acao:1,idEvento: 0},
+						type: "POST"
+					});
 				$( "#conteudo").html(function() {
 					return "<p></p>";
 				});
 			}else{
+				$.ajax({
+					url: "../control/cracha.php",
+					dataType: 'html',
+					data: {acao:1,idEvento: id},
+					type: "POST"
+				});
 				intervalo = setInterval(function(){ 
 					$.ajax({
 						url: "../control/listaPresensaControl.php",
@@ -58,7 +73,7 @@
 						data: {acao: 1,idEvento: id},
 						type: "POST",
 						success: function(data){
-							$('#conteudo').html('<b>Resultado da busca</b><br /><br/>'+data);
+							$('#conteudo').html("<b>Relatorio de entrada</b><br/><br/>"+data);
 						},
 						error: function(data){
 							$('#conteudo').html(data);

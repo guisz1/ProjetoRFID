@@ -30,8 +30,8 @@
     		foreach ($dados as $dado) {
     			$result = "Nome: ".$dado["nomeUsuario"]."<br>Status: ".$dado["statuss"];
     		}
-    		echo $result;
-    		return $result;
+            echo $result;
+    		
     	}
 	}
 	new listaPresensaControl();
