@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import time
 import sys
-import MySQLdb
 import re
 import keyboard
 import urllib2
