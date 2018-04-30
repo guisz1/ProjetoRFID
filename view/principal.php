@@ -37,6 +37,7 @@
 		var id = null;
 		var intervalo = null;
 		$(document).ready(function(){
+			document.getElementById("selecionarEvento").focus();
   			$.ajax({
 				url: "../control/cracha.php",
 				dataType: 'html',
@@ -60,6 +61,7 @@
 					return "<p></p>";
 				});
 			}else{
+				document.getElementById("selecionarEvento").blur();
 				$.ajax({
 					url: "../control/cracha.php",
 					dataType: 'html',

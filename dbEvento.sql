@@ -3,8 +3,8 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Tempo de geração: 12/04/2018 às 11:18
--- Versão do servidor: 5.7.21-0ubuntu0.16.04.1
+-- Tempo de geração: 27/04/2018 às 11:10
+-- Versão do servidor: 5.7.22-0ubuntu0.16.04.1
 -- Versão do PHP: 7.0.28-0ubuntu0.16.04.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -30,10 +30,33 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `ativarEvento` (IN `evento` INT)  BE
 	UPDATE tbEvento SET ativo = 1 WHERE idEvento = ide;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `desativarEvento` (IN `evento` INT)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `controlaPresensa` (IN `idEven` INT, IN `codigoCartao` VARCHAR(100))  BEGIN
+	DECLARE idUsu INT;
+	DECLARE stat BOOLEAN;
+   	DECLARE statD VARCHAR(3);
+    DECLARE ativa INT;
+    SET idUsu = cartaouserId(codigoCartao);
+    SET stat = verificaEntrada(idUsu,idEven);
+    SELECT ativo INTO ativa FROM tbEvento WHERE idEvento = idEven;
+    IF  (stat = TRUE  AND idUsu != 0) THEN
+    	SET statD  = checkStatus(idUsu,idEven);
+    END IF;
+    IF (stat = FALSE AND ativa = 1 AND idUsu != 0) THEN
+   		INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"IN",CURRENT_TIMESTAMP);
+        UPDATE tbEvento SET inserido = 1 WHERE idEvento = idEven;
+    END IF;
+    IF (statD = "IN" AND ativa = 1 AND idUsu != 0) THEN
+    	INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"OUT",CURRENT_TIMESTAMP);
+    END IF;
+    IF (statD = "OUT" AND ativa = 1 AND idUsu != 0) THEN
+    	 INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"IN",CURRENT_TIMESTAMP);
+    END IF;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `eventoSelecionado` (IN `idEvento` INT)  BEGIN
 	DECLARE idEve INT;
-    	SET idEve = evento;
-	UPDATE tbEvento SET ativo = 0 WHERE idEvento = idEve;
+    SET idEve = idEvento;
+    UPDATE idSelecionado SET idSelecionado = idEve where id = 1;
 END$$
 
 --
@@ -53,32 +76,10 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `checkStatus` (`idUser` INT, `idEvent
     RETURN stat;
 END$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `controlaPresensa` (`idEven` INT, `codigoCartao` VARCHAR(100)) RETURNS TINYINT(1) BEGIN
-	DECLARE idUsu INT;
-	DECLARE stat BOOLEAN;
-   	DECLARE statD VARCHAR(3);
-    DECLARE ativa INT;
-    DECLARE valida BOOLEAN;
-    SET valida = FALSE;
-    SET idUsu = cartaouserId(codigoCartao);
-    SET stat = verificaEntrada(idUsu,idEven);
-    SELECT ativo INTO ativa FROM tbEvento WHERE idEvento = idEven;
-    IF  (stat = TRUE  AND idUsu != 0) THEN
-    	SET statD  = checkStatus(idUsu,idEven);
-    END IF;
-    IF (stat = FALSE AND ativa = 1 AND idUsu != 0) THEN
-   		INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"IN",CURRENT_TIMESTAMP);
-        SET valida = TRUE;
-    END IF;
-    IF (statD = "IN" AND ativa = 1 AND idUsu != 0) THEN
-    	INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"OUT",CURRENT_TIMESTAMP);
-        SET valida = TRUE;
-    END IF;
-    IF (statD = "OUT" AND ativa = 1 AND idUsu != 0) THEN
-    	 INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"IN",CURRENT_TIMESTAMP);
-         SET valida = TRUE;
-    END IF;
-    RETURN valida;
+CREATE DEFINER=`root`@`localhost` FUNCTION `ultimo` () RETURNS INT(11) BEGIN
+	DECLARE idS INT;
+    SELECT idSelecionado INTO idS FROM idSelecionado WHERE id = 1;
+    RETURN idS;
 END$$
 
 CREATE DEFINER=`root`@`localhost` FUNCTION `verificaEntrada` (`idUser` INT, `idEvent` INT) RETURNS TINYINT(1) BEGIN
@@ -110,6 +111,24 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Estrutura para tabela `idSelecionado`
+--
+
+CREATE TABLE `idSelecionado` (
+  `id` int(11) NOT NULL,
+  `idSelecionado` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Fazendo dump de dados para tabela `idSelecionado`
+--
+
+INSERT INTO `idSelecionado` (`id`, `idSelecionado`) VALUES
+(1, 0);
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura para tabela `listaPresensa`
 --
 
@@ -119,6 +138,32 @@ CREATE TABLE `listaPresensa` (
   `status` varchar(3) NOT NULL,
   `horario` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Fazendo dump de dados para tabela `listaPresensa`
+--
+
+INSERT INTO `listaPresensa` (`idEvento`, `idUsuario`, `status`, `horario`) VALUES
+(1, 1, 'IN', '2018-04-27 12:38:01'),
+(1, 1, 'OUT', '2018-04-27 12:38:41'),
+(1, 1, 'IN', '2018-04-27 12:38:49'),
+(1, 1, 'OUT', '2018-04-27 12:38:52'),
+(1, 1, 'IN', '2018-04-27 12:39:13'),
+(1, 1, 'OUT', '2018-04-27 12:39:21'),
+(2, 1, 'IN', '2018-04-27 13:13:34'),
+(1, 1, 'IN', '2018-04-27 13:13:39'),
+(2, 1, 'OUT', '2018-04-27 13:13:45'),
+(1, 1, 'OUT', '2018-04-27 13:13:49'),
+(2, 1, 'IN', '2018-04-27 13:15:02'),
+(1, 1, 'IN', '2018-04-27 13:15:16'),
+(1, 1, 'OUT', '2018-04-27 13:15:20'),
+(1, 2, 'IN', '2018-04-27 13:15:36'),
+(1, 1, 'IN', '2018-04-27 13:20:59'),
+(1, 1, 'OUT', '2018-04-27 13:21:05'),
+(2, 1, 'OUT', '2018-04-27 13:21:12'),
+(1, 1, 'IN', '2018-04-27 13:28:59'),
+(1, 1, 'OUT', '2018-04-27 13:29:03'),
+(1, 1, 'IN', '2018-04-27 13:31:44');
 
 -- --------------------------------------------------------
 
@@ -152,8 +197,17 @@ CREATE TABLE `tbEvento` (
   `idEvento` int(11) NOT NULL,
   `nomeEvento` varchar(100) NOT NULL,
   `dataEvento` date DEFAULT NULL,
-  `ativo` int(11) NOT NULL
+  `ativo` int(11) NOT NULL,
+  `inserido` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Fazendo dump de dados para tabela `tbEvento`
+--
+
+INSERT INTO `tbEvento` (`idEvento`, `nomeEvento`, `dataEvento`, `ativo`, `inserido`) VALUES
+(1, 'SIPAT 2018', '2018-04-19', 1, 1),
+(2, 'SIPAT 2020', '2018-04-26', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -213,7 +267,7 @@ ALTER TABLE `tbCartao`
 -- AUTO_INCREMENT de tabela `tbEvento`
 --
 ALTER TABLE `tbEvento`
-  MODIFY `idEvento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `idEvento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de tabela `tbUsuario`
 --
