@@ -5,6 +5,7 @@
 	class criaPDF{
 		function fazer($idEvento){
 			$dompdf = new DOMPDF();
+			$vazio = "------";
 			$listaC = new listaPresensaControl();
 			$dados = $listaC->buscaRelatorioPorEvento($idEvento);
 			$evento = null;
@@ -29,15 +30,26 @@
 				<table class=tbconteudo>
 				  <tr>
 				    <td class=tdrconteudo>Participante</td>
-				    <td class=tddrconteudo>Assinatura</td>
+				    <td class=tddrconteudo>ENTRADA</td>
+				    <td class=tddrconteudo>SAIDA</td>
 				  </tr>
 				  ';
 				foreach ($dados as $dado) {
+					if ($dado["ent"] !== $dado["saida"]) {
 					$html .='
 					<tr>
 					    <td class=tdconteudo>'.$dado["nomeUsuario"].'</td>
-					    <td class=tddconteudo></td
+					    <td class=tddconteudo>'.$dado["ent"].'</td>
+					    <td class=tddconteudo>'.$dado["saida"].'</td>
 					</tr>';
+					}else{
+					$html .='
+						<tr>
+						    <td class=tdconteudo>'.$dado["nomeUsuario"].'</td>
+						    <td class=tddconteudo>'.$dado["ent"].'</td>
+						    <td class=tddconteudo style="color: red;">'.$vazio.'</td>
+						</tr>';	
+					}
 				}
 				  $html .='
 				</table>

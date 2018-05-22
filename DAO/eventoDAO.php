@@ -28,10 +28,9 @@
     function inserir(Evento $e){
       $nome = $e->getNomeEvento();
       $data = $e->getDataEvento();
-      $query = "insert into tbEvento(nomeEvento,dataEvento,ativo) values ('".$nome."','".$data."','0');";
+      $query = "insert into tbEvento(nomeEvento,dataEvento,ativo,inserido) values ('".$nome."','".$data."','0','0');";
       $this->stm = $this->con->prepare($query);
       $this->stm->execute();
-
       header("Location:../view/principal.php");
 
     }

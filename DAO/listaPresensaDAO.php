@@ -29,7 +29,7 @@
     		return $dados;
     	}
     	function geraRelatorioPorEvento($idEvento){
-    		$query = "SELECT DISTINCT tbUsuario.nomeUsuario as nomeUsuario,tbEvento.nomeEvento as nomeEvento, date_format(tbEvento.dataEvento, '%d/%m/%Y') as data FROM ((listaPresensa INNER JOIN tbUsuario ON listaPresensa.idUsuario = tbUsuario.idUsuario) INNER JOIN tbEvento ON listaPresensa.idEvento = tbEvento.idEvento) WHERE listaPresensa.idEvento = ".$idEvento." ORDER BY tbUsuario.nomeUsuario ASC";
+    		$query = "SELECT DISTINCT tbUsuario.nomeUsuario as nomeUsuario,tbEvento.nomeEvento as nomeEvento, date_format(tbEvento.dataEvento, '%d/%m/%Y') as data, MIN(date_format(listaPresensa.horario, '%d/%m/%Y %H:%i:%s')) as ent,MAX(date_format(listaPresensa.horario, '%d/%m/%Y %H:%i:%s')) as saida FROM listaPresensa INNER JOIN tbUsuario ON listaPresensa.idUsuario = tbUsuario.idUsuario  INNER JOIN tbEvento ON listaPresensa.idEvento = tbEvento.idEvento WHERE listaPresensa.idEvento = ".$idEvento." GROUP BY tbUsuario.nomeUsuario ORDER BY tbUsuario.nomeUsuario ASC  ";
     		$busca = $this->con->query($query);
     		$dados = $busca->fetchAll(PDO::FETCH_ASSOC);
     		return $dados;
@@ -40,5 +40,6 @@
     		$dados = $busca->fetchAll(PDO::FETCH_ASSOC);
     		return $dados;
     	}
+
 	}
 ?>

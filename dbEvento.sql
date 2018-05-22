@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Tempo de geração: 27/04/2018 às 11:10
+-- Tempo de geração: 22/05/2018 às 09:41
 -- Versão do servidor: 5.7.22-0ubuntu0.16.04.1
--- Versão do PHP: 7.0.28-0ubuntu0.16.04.1
+-- Versão do PHP: 7.0.30-0ubuntu0.16.04.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -24,12 +24,14 @@ DELIMITER $$
 --
 -- Procedimentos
 --
+DROP PROCEDURE IF EXISTS `ativarEvento`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `ativarEvento` (IN `evento` INT)  BEGIN
 	DECLARE ide INT;
     	SET ide = evento;
 	UPDATE tbEvento SET ativo = 1 WHERE idEvento = ide;
 END$$
 
+DROP PROCEDURE IF EXISTS `controlaPresensa`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `controlaPresensa` (IN `idEven` INT, IN `codigoCartao` VARCHAR(100))  BEGIN
 	DECLARE idUsu INT;
 	DECLARE stat BOOLEAN;
@@ -43,6 +45,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `controlaPresensa` (IN `idEven` INT,
     END IF;
     IF (stat = FALSE AND ativa = 1 AND idUsu != 0) THEN
    		INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"IN",CURRENT_TIMESTAMP);
+        
         UPDATE tbEvento SET inserido = 1 WHERE idEvento = idEven;
     END IF;
     IF (statD = "IN" AND ativa = 1 AND idUsu != 0) THEN
@@ -53,6 +56,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `controlaPresensa` (IN `idEven` INT,
     END IF;
 END$$
 
+DROP PROCEDURE IF EXISTS `eventoSelecionado`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `eventoSelecionado` (IN `idEvento` INT)  BEGIN
 	DECLARE idEve INT;
     SET idEve = idEvento;
@@ -62,6 +66,7 @@ END$$
 --
 -- Funções
 --
+DROP FUNCTION IF EXISTS `cartaouserId`$$
 CREATE DEFINER=`root`@`localhost` FUNCTION `cartaouserId` (`cartao` VARCHAR(100)) RETURNS INT(11) BEGIN
     	DECLARE codigo INT;
         SET codigo = 0;
@@ -70,18 +75,21 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `cartaouserId` (`cartao` VARCHAR(100)
         RETURN codigo;
 	END$$
 
+DROP FUNCTION IF EXISTS `checkStatus`$$
 CREATE DEFINER=`root`@`localhost` FUNCTION `checkStatus` (`idUser` INT, `idEvent` INT) RETURNS VARCHAR(3) CHARSET utf8 BEGIN
 	DECLARE stat VARCHAR(3);
     SELECT status INTO stat FROM listaPresensa WHERE idUsuario = idUser AND idEvento = idEvent AND horario = (SELECT MAX(horario) FROM listaPresensa WHERE idEvento= idEvent AND idUsuario = idUser);
     RETURN stat;
 END$$
 
+DROP FUNCTION IF EXISTS `ultimo`$$
 CREATE DEFINER=`root`@`localhost` FUNCTION `ultimo` () RETURNS INT(11) BEGIN
 	DECLARE idS INT;
     SELECT idSelecionado INTO idS FROM idSelecionado WHERE id = 1;
     RETURN idS;
 END$$
 
+DROP FUNCTION IF EXISTS `verificaEntrada`$$
 CREATE DEFINER=`root`@`localhost` FUNCTION `verificaEntrada` (`idUser` INT, `idEvent` INT) RETURNS TINYINT(1) BEGIN
     DECLARE stat INT;
     DECLARE evento INT;
@@ -96,6 +104,7 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `verificaEntrada` (`idUser` INT, `idE
     END IF;
 END$$
 
+DROP FUNCTION IF EXISTS `verificaExistencia`$$
 CREATE DEFINER=`root`@`localhost` FUNCTION `verificaExistencia` (`evento` INT) RETURNS TINYINT(4) BEGIN
 	DECLARE verifica INT;
     SELECT idEvento INTO verifica FROM tbEvento WHERE idEvento = evento;
@@ -114,7 +123,8 @@ DELIMITER ;
 -- Estrutura para tabela `idSelecionado`
 --
 
-CREATE TABLE `idSelecionado` (
+DROP TABLE IF EXISTS `idSelecionado`;
+CREATE TABLE IF NOT EXISTS `idSelecionado` (
   `id` int(11) NOT NULL,
   `idSelecionado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -132,38 +142,13 @@ INSERT INTO `idSelecionado` (`id`, `idSelecionado`) VALUES
 -- Estrutura para tabela `listaPresensa`
 --
 
-CREATE TABLE `listaPresensa` (
+DROP TABLE IF EXISTS `listaPresensa`;
+CREATE TABLE IF NOT EXISTS `listaPresensa` (
   `idEvento` int(11) NOT NULL,
   `idUsuario` int(11) NOT NULL,
   `status` varchar(3) NOT NULL,
   `horario` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Fazendo dump de dados para tabela `listaPresensa`
---
-
-INSERT INTO `listaPresensa` (`idEvento`, `idUsuario`, `status`, `horario`) VALUES
-(1, 1, 'IN', '2018-04-27 12:38:01'),
-(1, 1, 'OUT', '2018-04-27 12:38:41'),
-(1, 1, 'IN', '2018-04-27 12:38:49'),
-(1, 1, 'OUT', '2018-04-27 12:38:52'),
-(1, 1, 'IN', '2018-04-27 12:39:13'),
-(1, 1, 'OUT', '2018-04-27 12:39:21'),
-(2, 1, 'IN', '2018-04-27 13:13:34'),
-(1, 1, 'IN', '2018-04-27 13:13:39'),
-(2, 1, 'OUT', '2018-04-27 13:13:45'),
-(1, 1, 'OUT', '2018-04-27 13:13:49'),
-(2, 1, 'IN', '2018-04-27 13:15:02'),
-(1, 1, 'IN', '2018-04-27 13:15:16'),
-(1, 1, 'OUT', '2018-04-27 13:15:20'),
-(1, 2, 'IN', '2018-04-27 13:15:36'),
-(1, 1, 'IN', '2018-04-27 13:20:59'),
-(1, 1, 'OUT', '2018-04-27 13:21:05'),
-(2, 1, 'OUT', '2018-04-27 13:21:12'),
-(1, 1, 'IN', '2018-04-27 13:28:59'),
-(1, 1, 'OUT', '2018-04-27 13:29:03'),
-(1, 1, 'IN', '2018-04-27 13:31:44');
 
 -- --------------------------------------------------------
 
@@ -171,11 +156,15 @@ INSERT INTO `listaPresensa` (`idEvento`, `idUsuario`, `status`, `horario`) VALUE
 -- Estrutura para tabela `tbCartao`
 --
 
-CREATE TABLE `tbCartao` (
-  `idCartao` int(11) NOT NULL,
+DROP TABLE IF EXISTS `tbCartao`;
+CREATE TABLE IF NOT EXISTS `tbCartao` (
+  `idCartao` int(11) NOT NULL AUTO_INCREMENT,
   `codigoCartao` varchar(255) NOT NULL,
-  `idUsuario` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `idUsuario` int(11) NOT NULL,
+  PRIMARY KEY (`idCartao`),
+  UNIQUE KEY `codigoCartao` (`codigoCartao`),
+  UNIQUE KEY `idUsuario` (`idUsuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Fazendo dump de dados para tabela `tbCartao`
@@ -193,21 +182,22 @@ INSERT INTO `tbCartao` (`idCartao`, `codigoCartao`, `idUsuario`) VALUES
 -- Estrutura para tabela `tbEvento`
 --
 
-CREATE TABLE `tbEvento` (
-  `idEvento` int(11) NOT NULL,
+DROP TABLE IF EXISTS `tbEvento`;
+CREATE TABLE IF NOT EXISTS `tbEvento` (
+  `idEvento` int(11) NOT NULL AUTO_INCREMENT,
   `nomeEvento` varchar(100) NOT NULL,
   `dataEvento` date DEFAULT NULL,
   `ativo` int(11) NOT NULL,
-  `inserido` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `inserido` int(11) NOT NULL,
+  PRIMARY KEY (`idEvento`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 --
 -- Fazendo dump de dados para tabela `tbEvento`
 --
 
 INSERT INTO `tbEvento` (`idEvento`, `nomeEvento`, `dataEvento`, `ativo`, `inserido`) VALUES
-(1, 'SIPAT 2018', '2018-04-19', 1, 1),
-(2, 'SIPAT 2020', '2018-04-26', 1, 1);
+(3, 'SIPAT 2018', '2018-05-22', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -215,10 +205,12 @@ INSERT INTO `tbEvento` (`idEvento`, `nomeEvento`, `dataEvento`, `ativo`, `inseri
 -- Estrutura para tabela `tbUsuario`
 --
 
-CREATE TABLE `tbUsuario` (
-  `idUsuario` int(11) NOT NULL,
-  `nomeUsuario` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+DROP TABLE IF EXISTS `tbUsuario`;
+CREATE TABLE IF NOT EXISTS `tbUsuario` (
+  `idUsuario` int(11) NOT NULL AUTO_INCREMENT,
+  `nomeUsuario` varchar(100) NOT NULL,
+  PRIMARY KEY (`idUsuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 --
 -- Fazendo dump de dados para tabela `tbUsuario`
@@ -230,49 +222,6 @@ INSERT INTO `tbUsuario` (`idUsuario`, `nomeUsuario`) VALUES
 (3, 'Lucas Brito'),
 (5, 'Marcos Vinicius Alves Balsamo');
 
---
--- Índices de tabelas apagadas
---
-
---
--- Índices de tabela `tbCartao`
---
-ALTER TABLE `tbCartao`
-  ADD PRIMARY KEY (`idCartao`),
-  ADD UNIQUE KEY `codigoCartao` (`codigoCartao`),
-  ADD UNIQUE KEY `idUsuario` (`idUsuario`);
-
---
--- Índices de tabela `tbEvento`
---
-ALTER TABLE `tbEvento`
-  ADD PRIMARY KEY (`idEvento`);
-
---
--- Índices de tabela `tbUsuario`
---
-ALTER TABLE `tbUsuario`
-  ADD PRIMARY KEY (`idUsuario`);
-
---
--- AUTO_INCREMENT de tabelas apagadas
---
-
---
--- AUTO_INCREMENT de tabela `tbCartao`
---
-ALTER TABLE `tbCartao`
-  MODIFY `idCartao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
---
--- AUTO_INCREMENT de tabela `tbEvento`
---
-ALTER TABLE `tbEvento`
-  MODIFY `idEvento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
---
--- AUTO_INCREMENT de tabela `tbUsuario`
---
-ALTER TABLE `tbUsuario`
-  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
