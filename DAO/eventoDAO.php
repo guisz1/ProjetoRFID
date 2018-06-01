@@ -32,7 +32,6 @@
       $this->stm = $this->con->prepare($query);
       $this->stm->execute();
       header("Location:../view/principal.php");
-
     }
 
     function ativar($id){

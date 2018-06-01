@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Tempo de geração: 22/05/2018 às 09:41
+-- Tempo de geração: 01/06/2018 às 09:27
 -- Versão do servidor: 5.7.22-0ubuntu0.16.04.1
 -- Versão do PHP: 7.0.30-0ubuntu0.16.04.1
 
@@ -37,8 +37,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `controlaPresensa` (IN `idEven` INT,
 	DECLARE stat BOOLEAN;
    	DECLARE statD VARCHAR(3);
     DECLARE ativa INT;
+    DECLARE cadastro INT;
     SET idUsu = cartaouserId(codigoCartao);
     SET stat = verificaEntrada(idUsu,idEven);
+    SET cadastro = ultimoIdUsuario();
+    IF (cadastro != 0) THEN
+    	INSERT INTO tbCartao(codigoCartao,idUsuario) values (codigoCartao,cadastro);
+    END IF;
     SELECT ativo INTO ativa FROM tbEvento WHERE idEvento = idEven;
     IF  (stat = TRUE  AND idUsu != 0) THEN
     	SET statD  = checkStatus(idUsu,idEven);
@@ -89,6 +94,14 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `ultimo` () RETURNS INT(11) BEGIN
     RETURN idS;
 END$$
 
+DROP FUNCTION IF EXISTS `ultimoIdUsuario`$$
+CREATE DEFINER=`root`@`localhost` FUNCTION `ultimoIdUsuario` () RETURNS INT(11) BEGIN
+	DECLARE idU INT;
+    SELECT idUsuario INTO idU FROM cadastro WHERE id = 1;
+    UPDATE cadastro SET idUsuario = 0 WHERE id = 1;
+    RETURN idU;
+END$$
+
 DROP FUNCTION IF EXISTS `verificaEntrada`$$
 CREATE DEFINER=`root`@`localhost` FUNCTION `verificaEntrada` (`idUser` INT, `idEvent` INT) RETURNS TINYINT(1) BEGIN
     DECLARE stat INT;
@@ -116,6 +129,25 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `verificaExistencia` (`evento` INT) R
 END$$
 
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `cadastro`
+--
+
+DROP TABLE IF EXISTS `cadastro`;
+CREATE TABLE IF NOT EXISTS `cadastro` (
+  `id` int(11) NOT NULL,
+  `idUsuario` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Fazendo dump de dados para tabela `cadastro`
+--
+
+INSERT INTO `cadastro` (`id`, `idUsuario`) VALUES
+(1, 0);
 
 -- --------------------------------------------------------
 
@@ -164,17 +196,7 @@ CREATE TABLE IF NOT EXISTS `tbCartao` (
   PRIMARY KEY (`idCartao`),
   UNIQUE KEY `codigoCartao` (`codigoCartao`),
   UNIQUE KEY `idUsuario` (`idUsuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
-
---
--- Fazendo dump de dados para tabela `tbCartao`
---
-
-INSERT INTO `tbCartao` (`idCartao`, `codigoCartao`, `idUsuario`) VALUES
-(1, '5EE8511B', 1),
-(2, 'FE93591B', 2),
-(3, '6CA33E72', 3),
-(4, '5C5F4D72', 5);
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -192,13 +214,6 @@ CREATE TABLE IF NOT EXISTS `tbEvento` (
   PRIMARY KEY (`idEvento`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
---
--- Fazendo dump de dados para tabela `tbEvento`
---
-
-INSERT INTO `tbEvento` (`idEvento`, `nomeEvento`, `dataEvento`, `ativo`, `inserido`) VALUES
-(3, 'SIPAT 2018', '2018-05-22', 0, 0);
-
 -- --------------------------------------------------------
 
 --
@@ -210,17 +225,7 @@ CREATE TABLE IF NOT EXISTS `tbUsuario` (
   `idUsuario` int(11) NOT NULL AUTO_INCREMENT,
   `nomeUsuario` varchar(100) NOT NULL,
   PRIMARY KEY (`idUsuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
-
---
--- Fazendo dump de dados para tabela `tbUsuario`
---
-
-INSERT INTO `tbUsuario` (`idUsuario`, `nomeUsuario`) VALUES
-(1, 'Guilherme Seibert'),
-(2, 'Pedro Ivo Martins de Vasconcelos'),
-(3, 'Lucas Brito'),
-(5, 'Marcos Vinicius Alves Balsamo');
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
