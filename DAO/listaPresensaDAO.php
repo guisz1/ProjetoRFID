@@ -22,6 +22,12 @@
     		$dados = $busca->fetchAll(PDO::FETCH_ASSOC);
     		return $dados;
     	}
+        function buscaUltimoSem($idEvento){
+            $query = "SELECT tbEvento.nomeEvento AS nomeEvento, listaPresensa.status AS statuss, listaPresensa.horario AS horario FROM listaPresensa INNER JOIN tbEvento ON listaPresensa.idEvento = tbEvento.idEvento WHERE tbEvento.idEvento = ".$idEvento." ORDER BY horario DESC LIMIT 1";
+            $busca = $this->con->query($query);
+            $dados = $busca->fetchAll(PDO::FETCH_ASSOC);
+            return $dados;
+        }
     	function geraRelatorioGeral(){
     		$query = "SELECT DISTINCT tbUsuario.nomeUsuario,tbEvento.nomeEvento FROM ((listaPresensa INNER JOIN tbUsuario ON listaPresensa.idUsuario = tbUsuario.idUsuario) INNER JOIN tbEvento ON listaPresensa.idEvento = tbEvento.idEvento)ORDER BY tbEvento.nomeEvento ASC";
     		$busca = $this->con->query($query);

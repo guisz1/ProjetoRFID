@@ -17,8 +17,6 @@ def main():
 			conn = urllib2.httplib.HTTPConnection('localhost')
 			headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 			conn.request('POST', '/ProjetoRFID/view/recebeCracha.php', 'cartao='+card, headers)
-			status = conn.getresponse().read()
-			print status
 	except KeyboardInterrupt:
 		pass
 

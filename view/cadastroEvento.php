@@ -12,8 +12,9 @@
 	<nav id="menu">
     	<ul>
         	<li><a href="principal.php">Home</a></li>
-	    	<li><a href="cadastroEvento.php">Cadastro de Eventos</a></li>
-			<li><a href="pedidoRelatorio.php">Relatorio de Eventos</a></li>
+        	<li><a href="cadastroEvento.php">Cadastro de Eventos</a></li>
+        	<li><a href="pedidoRelatorio.php">Relatorio de Eventos</a></li>
+        	<li><a href="cadastro.php">Cadastro de Usuarios</a></li>
     	</ul>
 	</nav>	
 	<div class="divform">

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Tempo de geração: 01/06/2018 às 09:27
+-- Tempo de geração: 06/06/2018 às 11:13
 -- Versão do servidor: 5.7.22-0ubuntu0.16.04.1
 -- Versão do PHP: 7.0.30-0ubuntu0.16.04.1
 
@@ -32,33 +32,40 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `ativarEvento` (IN `evento` INT)  BE
 END$$
 
 DROP PROCEDURE IF EXISTS `controlaPresensa`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `controlaPresensa` (IN `idEven` INT, IN `codigoCartao` VARCHAR(100))  BEGIN
-	DECLARE idUsu INT;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `controlaPresensa` (IN `idEven` INT, IN `codigoCartao` VARCHAR(100))  BEGIN	
+    DECLARE idUsu INT;
 	DECLARE stat BOOLEAN;
    	DECLARE statD VARCHAR(3);
     DECLARE ativa INT;
     DECLARE cadastro INT;
-    SET idUsu = cartaouserId(codigoCartao);
-    SET stat = verificaEntrada(idUsu,idEven);
     SET cadastro = ultimoIdUsuario();
-    IF (cadastro != 0) THEN
+    SET idUsu = cartaouserId(codigoCartao);
+    IF (cadastro != 0 AND idUsu = 0) THEN
     	INSERT INTO tbCartao(codigoCartao,idUsuario) values (codigoCartao,cadastro);
+        SET idUsu = cartaouserId(codigoCartao);
     END IF;
-    SELECT ativo INTO ativa FROM tbEvento WHERE idEvento = idEven;
-    IF  (stat = TRUE  AND idUsu != 0) THEN
-    	SET statD  = checkStatus(idUsu,idEven);
-    END IF;
-    IF (stat = FALSE AND ativa = 1 AND idUsu != 0) THEN
-   		INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"IN",CURRENT_TIMESTAMP);
-        
-        UPDATE tbEvento SET inserido = 1 WHERE idEvento = idEven;
-    END IF;
-    IF (statD = "IN" AND ativa = 1 AND idUsu != 0) THEN
-    	INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"OUT",CURRENT_TIMESTAMP);
-    END IF;
-    IF (statD = "OUT" AND ativa = 1 AND idUsu != 0) THEN
-    	 INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"IN",CURRENT_TIMESTAMP);
-    END IF;
+    IF (idUsu != 0) THEN
+        SET stat = verificaEntrada(idUsu,idEven);
+        SELECT ativo INTO ativa FROM tbEvento WHERE idEvento = idEven;
+        IF  (stat = TRUE  AND idUsu != 0) THEN
+            SET statD  = checkStatus(idUsu,idEven);
+        END IF;
+        IF (stat = FALSE AND ativa = 1 AND idUsu != 0) THEN
+            INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"IN",CURRENT_TIMESTAMP);
+
+            UPDATE tbEvento SET inserido = 1 WHERE idEvento = idEven;
+        END IF;
+        IF (statD = "IN" AND ativa = 1 AND idUsu != 0) THEN
+            INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"OUT",CURRENT_TIMESTAMP);
+        END IF;
+        IF (statD = "OUT" AND ativa = 1 AND idUsu != 0) THEN
+             INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"IN",CURRENT_TIMESTAMP);
+        END IF;
+    ELSE
+    SET FOREIGN_KEY_CHECKS=0;
+    INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,0,"NAO",CURRENT_TIMESTAMP);
+    SET FOREIGN_KEY_CHECKS=1;
+  	END IF;
 END$$
 
 DROP PROCEDURE IF EXISTS `eventoSelecionado`$$
@@ -137,7 +144,7 @@ DELIMITER ;
 --
 
 DROP TABLE IF EXISTS `cadastro`;
-CREATE TABLE IF NOT EXISTS `cadastro` (
+CREATE TABLE `cadastro` (
   `id` int(11) NOT NULL,
   `idUsuario` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -156,7 +163,7 @@ INSERT INTO `cadastro` (`id`, `idUsuario`) VALUES
 --
 
 DROP TABLE IF EXISTS `idSelecionado`;
-CREATE TABLE IF NOT EXISTS `idSelecionado` (
+CREATE TABLE `idSelecionado` (
   `id` int(11) NOT NULL,
   `idSelecionado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -175,9 +182,9 @@ INSERT INTO `idSelecionado` (`id`, `idSelecionado`) VALUES
 --
 
 DROP TABLE IF EXISTS `listaPresensa`;
-CREATE TABLE IF NOT EXISTS `listaPresensa` (
+CREATE TABLE `listaPresensa` (
   `idEvento` int(11) NOT NULL,
-  `idUsuario` int(11) NOT NULL,
+  `idUsuario` int(11) DEFAULT NULL,
   `status` varchar(3) NOT NULL,
   `horario` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -189,14 +196,11 @@ CREATE TABLE IF NOT EXISTS `listaPresensa` (
 --
 
 DROP TABLE IF EXISTS `tbCartao`;
-CREATE TABLE IF NOT EXISTS `tbCartao` (
-  `idCartao` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `tbCartao` (
+  `idCartao` int(11) NOT NULL,
   `codigoCartao` varchar(255) NOT NULL,
-  `idUsuario` int(11) NOT NULL,
-  PRIMARY KEY (`idCartao`),
-  UNIQUE KEY `codigoCartao` (`codigoCartao`),
-  UNIQUE KEY `idUsuario` (`idUsuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+  `idUsuario` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -205,14 +209,13 @@ CREATE TABLE IF NOT EXISTS `tbCartao` (
 --
 
 DROP TABLE IF EXISTS `tbEvento`;
-CREATE TABLE IF NOT EXISTS `tbEvento` (
-  `idEvento` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `tbEvento` (
+  `idEvento` int(11) NOT NULL,
   `nomeEvento` varchar(100) NOT NULL,
   `dataEvento` date DEFAULT NULL,
   `ativo` int(11) NOT NULL,
-  `inserido` int(11) NOT NULL,
-  PRIMARY KEY (`idEvento`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+  `inserido` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -221,11 +224,79 @@ CREATE TABLE IF NOT EXISTS `tbEvento` (
 --
 
 DROP TABLE IF EXISTS `tbUsuario`;
-CREATE TABLE IF NOT EXISTS `tbUsuario` (
-  `idUsuario` int(11) NOT NULL AUTO_INCREMENT,
-  `nomeUsuario` varchar(100) NOT NULL,
-  PRIMARY KEY (`idUsuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
+CREATE TABLE `tbUsuario` (
+  `idUsuario` int(11) NOT NULL,
+  `nomeUsuario` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Índices de tabelas apagadas
+--
+
+--
+-- Índices de tabela `listaPresensa`
+--
+ALTER TABLE `listaPresensa`
+  ADD KEY `idEvento` (`idEvento`),
+  ADD KEY `idUsuario` (`idUsuario`),
+  ADD KEY `idUsuario_2` (`idUsuario`),
+  ADD KEY `idUsuario_3` (`idUsuario`);
+
+--
+-- Índices de tabela `tbCartao`
+--
+ALTER TABLE `tbCartao`
+  ADD PRIMARY KEY (`idCartao`),
+  ADD UNIQUE KEY `codigoCartao` (`codigoCartao`),
+  ADD UNIQUE KEY `idUsuario` (`idUsuario`);
+
+--
+-- Índices de tabela `tbEvento`
+--
+ALTER TABLE `tbEvento`
+  ADD PRIMARY KEY (`idEvento`);
+
+--
+-- Índices de tabela `tbUsuario`
+--
+ALTER TABLE `tbUsuario`
+  ADD PRIMARY KEY (`idUsuario`);
+
+--
+-- AUTO_INCREMENT de tabelas apagadas
+--
+
+--
+-- AUTO_INCREMENT de tabela `tbCartao`
+--
+ALTER TABLE `tbCartao`
+  MODIFY `idCartao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+--
+-- AUTO_INCREMENT de tabela `tbEvento`
+--
+ALTER TABLE `tbEvento`
+  MODIFY `idEvento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+--
+-- AUTO_INCREMENT de tabela `tbUsuario`
+--
+ALTER TABLE `tbUsuario`
+  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+--
+-- Restrições para dumps de tabelas
+--
+
+--
+-- Restrições para tabelas `listaPresensa`
+--
+ALTER TABLE `listaPresensa`
+  ADD CONSTRAINT `fk_id_evento` FOREIGN KEY (`idEvento`) REFERENCES `tbEvento` (`idEvento`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_usuario` FOREIGN KEY (`idUsuario`) REFERENCES `tbUsuario` (`idUsuario`);
+
+--
+-- Restrições para tabelas `tbCartao`
+--
+ALTER TABLE `tbCartao`
+  ADD CONSTRAINT `fk_id_usuario` FOREIGN KEY (`idUsuario`) REFERENCES `tbUsuario` (`idUsuario`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
