@@ -1,24 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import time
-import sys
-import re
-import keyboard
+import RPi.GPIO as GPIO
+import MFRC522
 import urllib2
 
 def main():
 	try:
+		LeitorRFID = MFRC522.MFRC522()
 		while True:
-			v = ''
-			v = keyboard.record(until='enter')
-			card = ''.join(e.name for e in v if e.event_type == 'down' and len(e.name) == 1)
-			card = str(card)
-			card = card.upper();
-			conn = urllib2.httplib.HTTPConnection('localhost')
-			headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
-			conn.request('POST', '/ProjetoRFID/view/recebeCracha.php', 'cartao='+card, headers)
+			status, tag_type = LeitorRFID.MFRC522_Request(LeitorRFID.PICC_REQIDL)
+			if status == LeitorRFID.MI_OK:
+				print(status)
+            	status, uid = LeitorRFID.MFRC522_Anticoll()
+	            if status == LeitorRFID.MI_OK:
+	                uid = ''.join('%02X' % c for c in uid)
+	                print(uid)
+					conn = urllib2.httplib.HTTPConnection('localhost')
+					headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+					conn.request('POST', '/ProjetoRFID/view/recebeCracha.php', 'cartao='+uid, headers)
 	except KeyboardInterrupt:
-		pass
+		GPIO.cleanup()
 
 if __name__ == '__main__':
 	main()

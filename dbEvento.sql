@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Tempo de geração: 06/06/2018 às 11:13
+-- Tempo de geração: 07/06/2018 às 09:31
 -- Versão do servidor: 5.7.22-0ubuntu0.16.04.1
 -- Versão do PHP: 7.0.30-0ubuntu0.16.04.1
 
@@ -61,7 +61,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `controlaPresensa` (IN `idEven` INT,
         IF (statD = "OUT" AND ativa = 1 AND idUsu != 0) THEN
              INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,idUsu,"IN",CURRENT_TIMESTAMP);
         END IF;
-    ELSE
+    ELSEIF (idEven !=0) THEN
     SET FOREIGN_KEY_CHECKS=0;
     INSERT INTO listaPresensa(idEvento,idUsuario,status,horario) VALUES (idEven,0,"NAO",CURRENT_TIMESTAMP);
     SET FOREIGN_KEY_CHECKS=1;
@@ -184,7 +184,7 @@ INSERT INTO `idSelecionado` (`id`, `idSelecionado`) VALUES
 DROP TABLE IF EXISTS `listaPresensa`;
 CREATE TABLE `listaPresensa` (
   `idEvento` int(11) NOT NULL,
-  `idUsuario` int(11) DEFAULT NULL,
+  `idUsuario` int(11) NOT NULL,
   `status` varchar(3) NOT NULL,
   `horario` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -270,17 +270,17 @@ ALTER TABLE `tbUsuario`
 -- AUTO_INCREMENT de tabela `tbCartao`
 --
 ALTER TABLE `tbCartao`
-  MODIFY `idCartao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `idCartao` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de tabela `tbEvento`
 --
 ALTER TABLE `tbEvento`
-  MODIFY `idEvento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `idEvento` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de tabela `tbUsuario`
 --
 ALTER TABLE `tbUsuario`
-  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Restrições para dumps de tabelas
 --

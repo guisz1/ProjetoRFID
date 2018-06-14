@@ -8,6 +8,13 @@
 		background-color:#e6ffe6;
 		opacity: 100%;
 	}
+	.botaoR{
+		width: 20px;
+		height: 20px;
+		position: absolute;
+		left: 0px;
+		bottom: 0px;
+	}
 	.imagemum{
 		width: 140px;
 		height: 75px;

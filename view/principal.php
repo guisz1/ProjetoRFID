@@ -19,7 +19,8 @@
 	</table>
 		<div class="tituloP">
 		<p>Exibição de entrada no evento</p>
-	</div>
+		<br>
+		</div>
 	<form action="" class="formulario">
 		<select id="selecionarEvento" name="customers" focus>
 			<option value=""></option>
@@ -86,6 +87,7 @@
 
 		});
 	</script>
+	<button class="botaoR" onclick="location.href = 'cadastroEvento.php';"></button>
 </div>
 <?php 
 	include "rodape.php";
